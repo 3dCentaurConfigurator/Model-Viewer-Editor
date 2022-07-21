@@ -1,0 +1,210 @@
+<html>
+<head>
+<link rel="icon" type="image/x-icon" href="/ModelTexture/logo.jpg">
+<title>Model Viewer</title>
+<h1> Centaur Digital</h1>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+model-viewer{
+height: 90%;
+width: 100%;
+}
+.controls
+{
+position: absolute;
+left: 1900px;
+top: 0px;
+ width: 400px;
+  height: 1000px;
+  border-style: groove;
+  border-color: coral;
+  border-width: 2px;
+  border-color: transparent;
+   box-shadow:10px 10px 30px 0px ; 
+}
+.dot{
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    background: #fff;
+    --min-hotspot-opacity: 0;
+  }
+
+  .dim{
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.8);
+    display: block;
+    font-family: Futura, Helvetica Neue, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    max-width: 128px;
+    overflow-wrap: break-word;
+    padding: 0.5em 1em;
+    position: absolute;
+    width: max-content;
+    height: max-content;
+    transform: translate3d(-50%, -50%, 0);
+    --min-hotspot-opacity: 0;
+  }
+
+  .show{
+    --min-hotspot-opacity: 1;
+  }
+
+  .hide{
+    display: none;
+  }
+  /* This keeps child nodes hidden while the element loads */
+  :not(:defined) > * {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<model-viewer id="helmet" camera-controls src="Model/DamagedHelmet.glb" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" shadow-intensity="1" alt="A 3D model of a helmet" enable-pan environment-image="neutral">
+
+<!-- Texture -->
+  <div class="controls">
+    <div>
+	
+      <p style="font-size:30px; color:blue; background-color:powderblue;">Texture Variant</p>
+      <div id="diffuse" >
+	    <button value="Texture/Default_albedo.jpg" style="background-image:url(Texture/Helmet.jpg); width : 100px; height : 100px; cursor: pointer; padding: 0; margin: 0; border: 0; background-position: center; background-size: cover; "></button>
+		<button value="Texture/camera_tripod_BaseColor.png" style="background-image:url(Texture/Helmet03.jpg); width : 100px; height : 100px; cursor: pointer;  padding: 0; margin: 0; border: 0; background-position: center; background-size: cover; "></button>
+		<button value="Texture/camera_camera_BaseColor.png" style="background-image:url(Texture/Helmet02.jpg); width : 100px; height : 100px; cursor: pointer;  padding: 0; margin: 0; border: 0; background-position: center; background-size: cover;"></button>
+		
+      </div>
+	</div>
+	<!-- Texture -->
+	<!-- HDRI -->
+	<hr style="width:50%;text-align:left;margin-left:0">
+	<p style="font-size:30px; color:blue; background-color:powderblue;"> Environment Lighting</p>
+<table id="tblHdr">
+    <tr>
+        <td><input id="chkCity" type="checkbox" value="1" /><label for="chkCity">City Night</label></td>
+    </tr>
+    <tr>
+        <td><input id="chkPark" type="checkbox" value="2"/><label for="chkPark">Outdoor</label></td>
+    </tr>
+    <tr>
+        <td><input id="chkSun" type="checkbox" value="3"/><label for="chkSun">Road Way</label></td>
+    </tr>
+    <tr>
+        <td><input id="chkKlo" type="checkbox" value="4"/><label for="chkKlo">Rock Outdoor</label></td>
+    </tr>
+    <tr>
+        <td><input id="chkHans" type="checkbox" value="5"/><label for="chkHans">Cinema</label></td>
+    </tr>
+</table>
+	<p style="font-size:15px; color:red; background-color:powderblue;" > Note:Uncheck the checkbox for default Lighting</p>
+	<hr style="width:50%;text-align:left;margin-left:0">
+	<!-- HDRI -->
+	<!-- annotation Scale Dimension -->
+	<p style="font-size:25px; color:blue; background-color:powderblue;" > Scale Dimension</p>
+
+     <label for="show-dimensions">Show Dimensions:</label>
+    <input id="show-dimensions" type="checkbox" checked="true">
+ 
+
+
+</model-viewer>
+<script type="module">
+const modelViewerTexture1 = document.querySelector("model-viewer#helmet");
+
+modelViewerTexture1.addEventListener("load", () => 
+{
+
+  const material = modelViewerTexture1.model.materials[0];
+
+  const createAndApplyTexture = async (channel, event) => {
+    const texture = await modelViewerTexture1.createTexture(event.target.value);
+    if (channel.includes('base') || channel.includes('metallic')) {
+      material.pbrMetallicRoughness[channel].setTexture(texture);
+    } else {
+      material[channel].setTexture(texture);
+    }
+ 
+  }
+  
+  document.querySelector('#diffuse').addEventListener('click', (event) => {
+    createAndApplyTexture('baseColorTexture', event);
+  });
+   document.querySelector('#metallicRoughness').addEventListener('click', (event) => {
+    createAndApplyTexture('metallicRoughnessTexture', event);
+  });
+
+ });
+
+</script>
+<script type="text/javascript">
+
+(() => {
+  const modelViewer = document.querySelector('#helmet');
+  const checkbox = document.querySelector('#chkCity');
+  
+  checkbox.addEventListener('change',() => {
+    
+	modelViewer.environmentImage = checkbox.checked ? 'HDR/hans.hdr' : '';
+  });
+})();
+(() => {
+  const modelViewer = document.querySelector('#helmet');
+  const checkbox = document.querySelector('#chkPark');
+  
+  checkbox.addEventListener('change',() => {
+    
+	modelViewer.environmentImage = checkbox.checked ?  'HDR/sun.hdr' : '';
+  });
+})();
+(() => {
+  const modelViewer = document.querySelector('#helmet');
+  const checkbox = document.querySelector('#chkSun');
+  
+  checkbox.addEventListener('change',() => {
+    
+	modelViewer.environmentImage = checkbox.checked ?  'HDR/park.hdr' : '';
+  });
+})();
+(() => {
+  const modelViewer = document.querySelector('#helmet');
+  const checkbox = document.querySelector('#chkKlo');
+  
+  checkbox.addEventListener('change',() => {
+    
+	modelViewer.environmentImage = checkbox.checked ?  'HDR/klo.hdr' : '';
+  });
+})();
+(() => {
+  const modelViewer = document.querySelector('#helmet');
+  const checkbox = document.querySelector('#chkHans');
+  
+  checkbox.addEventListener('change',() => {
+    
+	modelViewer.environmentImage = checkbox.checked ?  'HDR/cinema.hdr' : '';
+  });
+})();
+
+
+
+
+   window.onload = function () {
+        var tblHdr = document.getElementById("tblHdr");
+        var chks = tblHdr.getElementsByTagName("INPUT");
+        for (var i = 0; i < chks.length; i++) {
+            chks[i].onclick = function () {
+                for (var i = 0; i < chks.length; i++) {
+                    if (chks[i] != this && this.checked) {
+                        chks[i].checked = false;
+                    }
+                }
+            };
+        }
+    };
+
+</script>
+</body>
+</html>
